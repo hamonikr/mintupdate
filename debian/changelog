@@ -1,3 +1,9 @@
+mintupdate (5.7.3hamonikr3) hanla; urgency=medium
+
+  * add preremoval package code
+
+ -- HamoniKR Team <pkg@hamonikr.org>  Fri, 30 Apr 2021 11:17:37 +0900
+
 mintupdate (5.7.3hamonikr2) hanla; urgency=medium
 
   * upgrade hamonikr packages

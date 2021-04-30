@@ -21,6 +21,7 @@ sources_list3 = "/usr/share/hamonikr-upgrade-info/%s/hamonikr-pkg.list" % codena
 blacklist_filename = "/usr/share/hamonikr-upgrade-info/%s/blacklist" % codename
 additions_filename = "/usr/share/hamonikr-upgrade-info/%s/additions" % codename
 removals_filename = "/usr/share/hamonikr-upgrade-info/%s/removals" % codename
+preremovals_filename = "/usr/share/hamonikr-upgrade-info/%s/preremovals" % codename
 
 if not os.path.exists(sources_list):
     print("Unrecognized release: %s" % codename)
@@ -82,6 +83,11 @@ subprocess.run(["cp", sources_list3, "/etc/apt/sources.list.d/hamonikr-pkg.list"
 
 cache = apt.Cache()
 subprocess.run(["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--update-at-startup", "--non-interactive", "--parent-window-id", "%d" % window_id])
+
+# STEP 2.5 : PRE REMOVE PACKAGE (depends probrem)
+
+removals = file_to_list(preremovals_filename)
+remove_packages(removals)
 
 # STEP 3: INSTALL MINT UPDATES
 #--------------------------------
