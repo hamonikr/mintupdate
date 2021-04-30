@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:its="http://www.w3.org/2005/11/its" type="topic" style="task" id="mintupdate-cli">
+
+  <info>
+    <link type="guide" xref="index#advanced"/>
+
+    <credit type="author">
+      <name>Linux Mint</name>
+      <email>root@linuxmint.com</email>
+    </credit>
+
+    <include xmlns="http://www.w3.org/2001/XInclude" href="legal.xml"/>
+
+    <desc>עדכון משורת הפקודה</desc>
+  </info>
+
+  <title>בעזרת mintupdate-cli</title>
+
+    <p>מנהל העדכונים מספק תוכנת שורת-פקודה שנקראת "mintupdate-cli".</p>
+
+    <p>אם יש לך ניסיון עם לינוקס, את/ה יכול/ה להשתמש בכלי זה בסקריפטים או cron jobs כדי לעשות אוטומציה של התקנת עדכונים.</p>
+
+  <section id="tool1">
+
+  <title>מציג עדכונים</title>
+
+  <p>ניתן להשתמש בפקודה "list" כדי להציג את העדכונים:</p>
+
+  <screen>mintupdate-cli list</screen>
+
+  <p>ניתן להשתמש ב- -s כדי להציג עדכוני אבטחה בלבד.</p>
+
+  <p>ניתן להשתמש ב- -k כדי להציג עדכוני קרנל בלבד.</p>
+
+  <p>לדוגמה, הפקודה הבאה מציגה את כל עדכוני האבטחה:</p>
+
+  <screen>mintupdate-cli list -s</screen>
+
+  </section>
+
+  <section id="tool1">
+
+  <title>החלת עדכונים</title>
+
+  <p>כאשר משתמשים באותן אפשרויות, ניתן להשתמש בפקודה "upgrade" כדי להחיל עדכונים.</p>
+
+  <p>לדוגמה: הפקודה הבאה מחילה עדכוני קרנל:</p>
+
+  <screen>sudo mintupdate-cli upgrade -r -k</screen>
+
+  <p>יש לשים לב לארגומנט ה- -r, שמרענן את המטמון.</p>
+
+  <p>בשביל עוד מידע על mintupdate-cli ולרשימה מלאה של אפשרויות, הקלד/י:</p>
+
+  <screen>mintupdate-cli -h</screen>
+
+  </section>
+
+</page>

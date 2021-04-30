@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:its="http://www.w3.org/2005/11/its" xmlns:e="http://projectmallard.org/experimental/" type="guide" style="task" id="index">
+
+  <info>
+    <credit type="author">
+      <name>Linux Mint</name>
+      <email>root@linuxmint.com</email>
+    </credit>
+
+
+    <include xmlns="http://www.w3.org/2001/XInclude" href="legal.xml"/>
+
+  </info>
+
+  <title>מנהל העדכונים</title>
+
+  <p>מנהל העדכונים מספק למערכת ההפעלה שלך עדכוני תכנה ואבטחה.</p>
+
+  <p>עדכונים הם חשובים מכיוון שהם שומרים על המחשב שלך בטוח, מתקנים באגים ואפילו יכולים להוסיף תכונות חדשות למערכת ההפעלה.</p>
+
+  <p>לצערנו הם לפעמים גם יוצרים בעיות חדשות שנקראות 'נסיגות', שיכולות לשבור דברים שעבדו טוב לפני כן.</p>
+
+  <p>כדי לשמור על מחשבך בטוח, מומלץ להתקין את כל העדכונים ולהפעיל תמונות מערכת, כך שתוכל/י לשחזר את המערכת במקרה שמשהו ישתבש.</p>
+
+  <section id="concepts">
+    <title>עקרונות יסוד</title>
+
+    <p>חלק זה מסביר את עקרונות היסוד הנוגעים לעדכוני מערכת.</p>
+  </section>
+
+  <section id="kernel">
+    <title>עדכוני קרנל</title>
+
+    <p>חלק זה מסביר עדכוני קרנל.</p>
+  </section>
+
+  <section id="advanced">
+    <title>טכניקות מתקדמות</title>
+
+    <p>חלק זה מסביר טכניקות מתקדמות.</p>
+  </section>
+</page>

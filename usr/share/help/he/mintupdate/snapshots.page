@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" xmlns:its="http://www.w3.org/2005/11/its" type="topic" style="task" id="snapshots">
+
+  <info>
+    <link type="guide" xref="index#concepts"/>
+
+    <credit type="author">
+      <name>Linux Mint</name>
+      <email>root@linuxmint.com</email>
+    </credit>
+
+    <include xmlns="http://www.w3.org/2001/XInclude" href="legal.xml"/>
+
+    <desc>כאשר קרתה נסיגה רצינית, שחזר/י את תמונת המערכת האחרונה.</desc>
+  </info>
+
+    <title>תמונות מערכת</title>
+
+    <p>Timeshift, תכנת תמונות המערכת, זמינה בכל הגרסאות של Linux Mint.</p>
+
+    <p>ניתן להשתמש בה כדי ליצור תמונות ידנית אבל גם כדי ליצור תמונות מערכת באופן אוטומטי.</p>
+
+    <p>Linux Mint ממליץ לבצע אוטומציה של תמונות יומיות ובעת הפעלה.</p>
+
+    <p>עם עדכון, טעות, תקל או תכנה בעלת כוונות רעות שוברת משהו במחשבך, ניתן לשחזר את מערכת ההפעלה מכל תמונה, ולבטל את הבעיה כאילו שהיא מעולם לא קרתה.</p>
+
+    <note><p>תמונות מערכת מכסים רק את מערכת ההפעלה עצמה. הם לא כוללים או משפיעים על המידע האישי שלך.</p></note>
+
+</page>
