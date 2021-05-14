@@ -40,12 +40,26 @@ def install_packages(packages):
         f.flush()
         subprocess.run(cmd)
 
+# dpkg -l package > 'rc' (Settings File Remaining)
 def remove_packages(packages):
     if len(packages) > 0:
         cmd = ["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % window_id, "-o", "Synaptic::closeZvt=true"]
         f = tempfile.NamedTemporaryFile()
         for package in packages:
             pkg_line = "%s\tdeinstall\n" % package
+            f.write(pkg_line.encode("utf-8"))
+        cmd.append("--set-selections-file")
+        cmd.append("%s" % f.name)
+        f.flush()
+        subprocess.run(cmd)
+
+# dpkg -l package > 'un' (All Delete)
+def purge_packages(packages):
+    if len(packages) > 0:
+        cmd = ["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % window_id, "-o", "Synaptic::closeZvt=true"]
+        f = tempfile.NamedTemporaryFile()
+        for package in packages:
+            pkg_line = "%s\tpurge\n" % package
             f.write(pkg_line.encode("utf-8"))
         cmd.append("--set-selections-file")
         cmd.append("%s" % f.name)
@@ -87,7 +101,7 @@ subprocess.run(["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--update-at
 # STEP 2.5 : PRE REMOVE PACKAGE (depends probrem)
 
 removals = file_to_list(preremovals_filename)
-remove_packages(removals)
+purge_packages(removals)
 
 # STEP 3: INSTALL MINT UPDATES
 #--------------------------------
