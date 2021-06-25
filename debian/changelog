@@ -1,3 +1,10 @@
+mintupdate (5.7.3hamonikr5) hanla; urgency=medium
+
+  * Add code in rel_upgrade_root.py
+    - hamonikr-hanla.pref code
+
+ -- HamoniKR Team <pkg@hamonikr.org>  Fri, 25 Jun 2021 16:23:36 +0900
+
 mintupdate (5.7.3hamonikr4) hanla; urgency=medium
 
   * Add purge code in rel_upgrade_root.py

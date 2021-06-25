@@ -22,6 +22,7 @@ blacklist_filename = "/usr/share/hamonikr-upgrade-info/%s/blacklist" % codename
 additions_filename = "/usr/share/hamonikr-upgrade-info/%s/additions" % codename
 removals_filename = "/usr/share/hamonikr-upgrade-info/%s/removals" % codename
 preremovals_filename = "/usr/share/hamonikr-upgrade-info/%s/preremovals" % codename
+preferences_file = "/usr/share/hamonikr-upgrade-info/%s/hamonikr-hanla.pref" % codename
 
 if not os.path.exists(sources_list):
     print("Unrecognized release: %s" % codename)
@@ -91,6 +92,7 @@ if os.path.exists("/etc/apt/sources.list.d/hamonikr-pkg.list"):
 subprocess.run(["cp", sources_list, "/etc/apt/sources.list.d/official-package-repositories.list"])
 subprocess.run(["cp", sources_list2, "/etc/apt/sources.list.d/hamonikr.list"])
 subprocess.run(["cp", sources_list3, "/etc/apt/sources.list.d/hamonikr-pkg.list"])
+subprocess.run(["cp", preferences_file, "/etc/apt/preferences.d/hamonikr-hanla.pref"])
 
 # STEP 2: UPDATE APT CACHE
 #-------------------------
@@ -156,3 +158,7 @@ try:
         subprocess.run(["/usr/share/ubuntu-system-adjustments/systemd/adjust-grub-title"])
 except Exception as detail:
     syslog.syslog("Couldn't update grub: %s" % detail)
+
+# STEP 7: DELETE FILE
+#--------------------
+subprocess.run(["rm", "/etc/apt/preferences.d/hamonikr-hanla.pref"])
