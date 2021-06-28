@@ -1,3 +1,9 @@
+mintupdate (5.7.3hamonikr6) hanla; urgency=medium
+
+  * Change name Linux Mint to HamoniKR mintupdate-ko.po, rel_upgrade.py
+
+ -- HamoniKR Team <pkg@hamonikr.org>  Mon, 28 Jun 2021 17:59:48 +0900
+
 mintupdate (5.7.3hamonikr5) hanla; urgency=medium
 
   * Add code in rel_upgrade_root.py
