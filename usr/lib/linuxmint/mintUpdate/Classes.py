@@ -1,10 +1,17 @@
 #!/usr/bin/python3
 
-import gettext
-gettext.install("mintupdate", "/usr/share/locale")
-import html
+import gi
 from gi.repository import Gio
 
+import datetime
+import gettext
+import html
+import json
+import os
+import subprocess
+import time
+
+gettext.install("mintupdate", "/usr/share/locale")
 
 # These updates take priority over other updates.
 # If a new version of these packages is available, nothing else is listed.
@@ -21,12 +28,10 @@ CONFIGURED_KERNEL_TYPE = settings.get_string("selected-kernel-type")
 if CONFIGURED_KERNEL_TYPE not in SUPPORTED_KERNEL_TYPES:
     CONFIGURED_KERNEL_TYPE = "-generic"
 
+CONFIG_PATH = os.path.expanduser("~/.linuxmint/mintupdate")
+
 def get_release_dates():
     """ Get distro release dates for support duration calculation """
-    import os
-    import time
-    from datetime import datetime
-
     release_dates = {}
     distro_info = []
     if os.path.isfile("/usr/share/distro-info/ubuntu.csv"):
@@ -38,9 +43,9 @@ def get_release_dates():
             try:
                 distro = distro.split(",")
                 release_date = time.mktime(time.strptime(distro[4], '%Y-%m-%d'))
-                release_date = datetime.fromtimestamp(release_date)
+                release_date = datetime.datetime.fromtimestamp(release_date)
                 support_end = time.mktime(time.strptime(distro[5].rstrip(), '%Y-%m-%d'))
-                support_end = datetime.fromtimestamp(support_end)
+                support_end = datetime.datetime.fromtimestamp(support_end)
                 release_dates[distro[2]] = [release_date, support_end]
             except:
                 pass
@@ -116,7 +121,7 @@ class Update():
                     if origin.origin == "Debian" and '-Security' in origin.label:
                         self.type = "security"
                         break
-                    if source_name in ["firefox", "thunderbird"]:
+                    if source_name in ["firefox", "thunderbird", "chromium"]:
                         self.type = "security"
                         break
                     if origin.origin == "linuxmint":
@@ -197,3 +202,182 @@ class Alias():
         self.name = name
         self.short_description = short_description
         self.description = description
+
+class UpdateTracker():
+
+    # Loads past updates from JSON file
+    def __init__(self, settings, logger):
+        os.system("mkdir -p %s" % CONFIG_PATH)
+        self.path = os.path.join(CONFIG_PATH, "updates.json")
+
+        # Test case
+        self.test_mode = False
+        test_path = "/usr/share/linuxmint/mintupdate/tests/%s.json" % os.getenv("MINTUPDATE_TEST")
+        if os.path.exists(test_path):
+            os.system("mkdir -p %s" % CONFIG_PATH)
+            os.system("cp %s %s" % (test_path, self.path))
+            self.test_mode = True
+
+        self.tracker_version = 1 # version of the data structure
+        self.settings = settings
+        self.tracked_updates = {}
+        self.refreshed_update_names = [] # updates which are seen in checkAPT
+        self.today = datetime.date.today().strftime("%Y.%m.%d")
+        self.max_days = 0 # oldest update (in number of days seen)
+        self.oldest_since_date = self.today # oldest update (according to since date)
+        self.active = True # False if the tracking was already done today
+        self.security_only = self.settings.get_boolean("tracker-security-only")
+        self.logger = logger
+
+        try:
+            with open(self.path) as f:
+                self.tracked_updates = json.load(f)
+                if self.tracked_updates['version'] < self.tracker_version:
+                    raise Exception()
+                if self.tracked_updates['checked'] > self.today:
+                    raise Exception()
+                if self.tracked_updates['notified'] > self.today:
+                    raise Exception()
+                if self.tracked_updates['checked'] == self.today:
+                    # We already tracked updates today
+                    self.active = False
+        except Exception as e:
+            self.logger.write("Tracker exception: " + str(e))
+            self.tracked_updates['updates'] = {}
+            self.tracked_updates['version'] = self.tracker_version
+            self.tracked_updates['checked'] = self.today
+            self.tracked_updates['notified'] = self.today
+
+    # Updates the record for a particular update
+    def update(self, update):
+        self.refreshed_update_names.append(update.real_source_name)
+        if not update.real_source_name in self.tracked_updates['updates']:
+            update_record = {}
+            update_record['type'] = update.type
+            update_record['since'] = self.today
+            update_record['days'] = 1
+            self.tracked_updates['updates'][update.real_source_name] = update_record
+        else:
+            update_record = self.tracked_updates['updates'][update.real_source_name]
+            update_record['type'] = update.type
+            if self.today > self.tracked_updates['checked']:
+                update_record['days'] += 1
+
+        if update.type in ["security", "kernel"] or (not self.security_only):
+            if self.max_days < update_record['days']:
+                self.max_days = update_record['days']
+            if self.oldest_since_date > update_record['since']:
+                self.oldest_since_date = update_record['since']
+
+    # Returns the number of days between today and the given date string
+    def get_days_since_date(self, string, date_format):
+        if string == None:
+            return 999
+        datetime_object = datetime.datetime.strptime(string, date_format)
+        days = (datetime.date.today() - datetime_object.date()).days
+        return days
+
+    # Returns the number of days between today and the given timestamp
+    def get_days_since_timestamp(self, timestamp):
+        if timestamp == 0:
+            return 999
+        datetime_object = datetime.datetime.fromtimestamp(timestamp)
+        days = (datetime.date.today() - datetime_object.date()).days
+        return days
+
+    def get_latest_apt_upgrade(self):
+        latest_upgrade_date = None
+
+        if os.path.exists("/var/log/apt/history.log"):
+            logs = subprocess.getoutput("cat /var/log/apt/history.log")
+            for event in logs.split("\n\n"):
+                if not "Upgrade: " in event:
+                    continue
+                end_date = None
+                upgrade = None
+                for line in event.split("\n"):
+                    line = line.strip()
+                    if line.startswith("End-Date: "):
+                        end_date = line.replace("End-Date: ", "")
+                        end_date = end_date.split()[0]
+                if end_date != None and (latest_upgrade_date == None or end_date > latest_upgrade_date):
+                    latest_upgrade_date = end_date
+
+        if latest_upgrade_date == None:
+            try:
+                logs = subprocess.getoutput("zcat /var/log/apt/history.log*gz")
+                for event in logs.split("\n\n"):
+                    if not "Upgrade: " in event:
+                        continue
+                    end_date = None
+                    upgrade = None
+                    for line in event.split("\n"):
+                        line = line.strip()
+                        if line.startswith("End-Date: "):
+                            end_date = line.replace("End-Date: ", "")
+                            end_date = end_date.split()[0]
+                    if end_date != None and (latest_upgrade_date == None or end_date > latest_upgrade_date):
+                        latest_upgrade_date = end_date
+            except Exception as e:
+                print("Failed to check compressed APT logs", e)
+
+        return latest_upgrade_date
+
+    # Returns true if a notification is required and updates the tracker
+    # with the new notification date
+    def notify(self):
+        # Check notification enabled
+        if self.settings.get_boolean("tracker-disable-notifications"):
+            return False
+
+        # Check notification age
+        notified_age = self.get_days_since_date(self.tracked_updates['notified'], '%Y.%m.%d')
+        if notified_age < self.settings.get_int("tracker-days-between-notifications"):
+            self.logger.write("Tracker: Notification age is too small: %d days" % notified_age)
+            return False
+
+        notification_needed = False
+
+        # Check maximum logged-in days
+        if self.max_days >= self.settings.get_int("tracker-max-days"):
+            self.logger.write("Tracker: Max days reached: %d days" % self.max_days)
+            notification_needed = True
+        else:
+            max_age = self.get_days_since_date(self.oldest_since_date, '%Y.%m.%d')
+            # Check maximum update age
+            if max_age >= self.settings.get_int("tracker-max-age"):
+                self.logger.write("Tracker: Max age reached: %d days" % max_age)
+                notification_needed = True
+
+        if not self.test_mode:
+            # Check last time install button was pressed
+            last_install_age = self.get_days_since_timestamp(self.settings.get_int("install-last-run"))
+            if last_install_age <= self.settings.get_int("tracker-grace-period"):
+                self.logger.write("Tracker: Mintupdate update button was pressed recently: %d days ago" % last_install_age)
+                notification_needed = False
+            else:
+                # Check last time APT upgraded a package
+                last_apt_upgrade = self.get_latest_apt_upgrade()
+                last_apt_upgrade_age = self.get_days_since_date(last_apt_upgrade, '%Y-%m-%d')
+                if last_apt_upgrade_age <= self.settings.get_int("tracker-grace-period"):
+                    self.logger.write("Tracker: APT upgrades were taken recently: %d days ago" % last_apt_upgrade_age)
+                    notification_needed = False
+
+        if notification_needed:
+            self.tracked_updates['notified'] = self.today
+            return True
+        else:
+            return False
+
+    # Records updates in JSON file and potentially notify
+    def record(self):
+        # Purge non-refreshed updates
+        for name in list(self.tracked_updates['updates'].keys()):
+            if not name in self.refreshed_update_names:
+                del self.tracked_updates['updates'][name]
+        # Update the check date
+        self.tracked_updates['checked'] = self.today
+        # Write JSON
+        with open(self.path, "w") as f:
+            json.dump(self.tracked_updates, f, indent=2)
+

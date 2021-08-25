@@ -1,43 +1,95 @@
-mintupdate (5.7.3hamonikr6) hanla; urgency=medium
+mintupdate (5.7.8+hanla1) hanla; urgency=medium
 
-  * Change name Linux Mint to HamoniKR mintupdate-ko.po, rel_upgrade.py
+  * upgrade-hamonikr
 
- -- HamoniKR Team <pkg@hamonikr.org>  Mon, 28 Jun 2021 17:59:48 +0900
+ -- HamoniKR Team <pkg@hamonikr.org>  Wed, 25 Aug 2021 10:55:44 +0900
 
-mintupdate (5.7.3hamonikr5) hanla; urgency=medium
 
-  * Add code in rel_upgrade_root.py
-    - hamonikr-hanla.pref code
+mintupdate (5.7.8) uma; urgency=medium
 
- -- HamoniKR Team <pkg@hamonikr.org>  Fri, 25 Jun 2021 16:23:36 +0900
+  * Depend on gir1.2-notify-0.7
 
-mintupdate (5.7.3hamonikr4) hanla; urgency=medium
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 14 Jul 2021 09:50:03 +0100
 
-  * Add purge code in rel_upgrade_root.py
+mintupdate (5.7.7) uma; urgency=medium
 
- -- HamoniKR Team <pkg@hamonikr.org>  Fri, 14 May 2021 16:41:25 +0900
+  * Fix crash when APT sources are corrupt
+  * l10n: Update translations
+  * l10n: Generate files
 
-mintupdate (5.7.3hamonikr3) hanla; urgency=medium
+ -- Clement Lefebvre <root@linuxmint.com>  Wed, 23 Jun 2021 12:01:05 +0100
 
-  * add preremoval package code
+mintupdate (5.7.6) uma; urgency=medium
 
- -- HamoniKR Team <pkg@hamonikr.org>  Fri, 30 Apr 2021 18:15:07 +0900
+  * Replace present() with present_with_time()
 
-mintupdate (5.7.3hamonikr2) hanla; urgency=medium
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 10 Jun 2021 20:12:52 +0100
 
-  * upgrade hamonikr packages
-    - rel_upgrade_root.py line 112 > add code origin.origin == "pkg.hamonikr.org"
+mintupdate (5.7.5) uma; urgency=medium
 
- -- HamoniKR Team <pkg@hamonikr.org>  Fri, 30 Apr 2021 11:17:37 +0900
+  * l10n: Update translations
+  * l10n: Generate files
 
-mintupdate (5.7.3hamonikr1) hanla; urgency=medium
+ -- Clement Lefebvre <root@linuxmint.com>  Thu, 10 Jun 2021 11:28:54 +0100
 
-  * chage for hamonikr rolling update
-    - don't use /usr/share/linuxmint-upgrade-info
-    - /usr/share/hamonikr-upgrade-info used
-    - add apt hamonikr.list, hamonikr-pkg.list
+mintupdate (5.7.4) uma; urgency=medium
 
- -- HamoniKR Team <pkg@hamonikr.org>  Thu, 29 Apr 2021 15:18:21 +0900
+  [ Eric ]
+  * Fixed #656: upgrade warnings checkbox now works as expected
+
+  [ agent-redd ]
+  * Bugfix for "CVE Tracker" Link
+
+  [ Thomas Uhle ]
+  * Packaging: Adapt dependencies to reflect the switch from cron to systemd timers
+
+  [ Clement Lefebvre ]
+  * mintupdate-cli: Update description for install-recommends
+  * Record the last time the apply-updates button was pressed
+  * Depecations: Replace parser.unescape with html.unescape
+  * Present the window if the welcome screen needs to be acknowledged
+  * Remove unnecessary variable
+  * Simplify refresh thread
+  * Add tests for various cases
+  * Fix insensitive update button in self-update case
+  * Simplify refresh thread
+  * Add a test case for the apt policy
+  * Refactor code around mint layer detection
+  * test: Fix /lib copy call on merged systems
+  * Keep track of updates over time
+  * Notify user when updates are too old
+  * Add a setting to disable notifications
+  * Improve notification system
+  * Fix exception handling
+
+  [ Butterfly ]
+  * Always mark Chromium updates as security updates (#664)
+
+  [ Clement Lefebvre ]
+  * Fix a regression in previous commits
+  * Notifications: Fix i18n with ngettext
+
+  [ Michael Webster ]
+  * mintUpdate.py: Fix status icon activation.
+
+  [ Clement Lefebvre ]
+  * Add support for Cinnamon spices (#670)
+
+  [ Michael Webster ]
+  * mintUpdate.py: Set the transient-for property on the preferences window so it stays on top of and visible with the main window.
+
+  [ johanw ]
+  * No Updates without Power Supply
+  * Fixed some small bugs
+
+  [ Michael Webster ]
+  * mintUpdate.py: If the upgrade gets aborted by the user, abort the cinnamon updates also.
+  * Make nvidia driver updates require a reboot. Don't restart cinnamon if a reboot is neeed.
+
+  [ Clement Lefebvre ]
+  * l10n: Update POT
+
+ -- Clement Lefebvre <root@linuxmint.com>  Fri, 04 Jun 2021 11:53:32 +0100
 
 mintupdate (5.7.3) ulyssa; urgency=medium
 

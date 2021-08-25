@@ -22,7 +22,6 @@ blacklist_filename = "/usr/share/hamonikr-upgrade-info/%s/blacklist" % codename
 additions_filename = "/usr/share/hamonikr-upgrade-info/%s/additions" % codename
 removals_filename = "/usr/share/hamonikr-upgrade-info/%s/removals" % codename
 preremovals_filename = "/usr/share/hamonikr-upgrade-info/%s/preremovals" % codename
-preferences_file = "/usr/share/hamonikr-upgrade-info/%s/hamonikr-hanla.pref" % codename
 
 if not os.path.exists(sources_list):
     print("Unrecognized release: %s" % codename)
@@ -41,26 +40,12 @@ def install_packages(packages):
         f.flush()
         subprocess.run(cmd)
 
-# dpkg -l package > 'rc' (Settings File Remaining)
 def remove_packages(packages):
     if len(packages) > 0:
         cmd = ["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % window_id, "-o", "Synaptic::closeZvt=true"]
         f = tempfile.NamedTemporaryFile()
         for package in packages:
             pkg_line = "%s\tdeinstall\n" % package
-            f.write(pkg_line.encode("utf-8"))
-        cmd.append("--set-selections-file")
-        cmd.append("%s" % f.name)
-        f.flush()
-        subprocess.run(cmd)
-
-# dpkg -l package > 'un' (All Delete)
-def purge_packages(packages):
-    if len(packages) > 0:
-        cmd = ["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--non-interactive", "--parent-window-id", "%s" % window_id, "-o", "Synaptic::closeZvt=true"]
-        f = tempfile.NamedTemporaryFile()
-        for package in packages:
-            pkg_line = "%s\tpurge\n" % package
             f.write(pkg_line.encode("utf-8"))
         cmd.append("--set-selections-file")
         cmd.append("%s" % f.name)
@@ -92,7 +77,6 @@ if os.path.exists("/etc/apt/sources.list.d/hamonikr-pkg.list"):
 subprocess.run(["cp", sources_list, "/etc/apt/sources.list.d/official-package-repositories.list"])
 subprocess.run(["cp", sources_list2, "/etc/apt/sources.list.d/hamonikr.list"])
 subprocess.run(["cp", sources_list3, "/etc/apt/sources.list.d/hamonikr-pkg.list"])
-subprocess.run(["cp", preferences_file, "/etc/apt/preferences.d/hamonikr-hanla.pref"])
 
 # STEP 2: UPDATE APT CACHE
 #-------------------------
@@ -103,7 +87,7 @@ subprocess.run(["sudo", "/usr/sbin/synaptic", "--hide-main-window", "--update-at
 # STEP 2.5 : PRE REMOVE PACKAGE (depends probrem)
 
 removals = file_to_list(preremovals_filename)
-purge_packages(removals)
+remove_packages(removals)
 
 # STEP 3: INSTALL MINT UPDATES
 #--------------------------------
@@ -158,7 +142,3 @@ try:
         subprocess.run(["/usr/share/ubuntu-system-adjustments/systemd/adjust-grub-title"])
 except Exception as detail:
     syslog.syslog("Couldn't update grub: %s" % detail)
-
-# STEP 7: DELETE FILE
-#--------------------
-subprocess.run(["rm", "/etc/apt/preferences.d/hamonikr-hanla.pref"])

@@ -36,7 +36,7 @@ class Assistant:
         self.assistant.set_icon_name("mintupdate-release-upgrade")
 
         if not os.path.exists("/etc/hamonikr/info"):
-            self.show_message('/usr/lib/linuxmint/mintUpdate/rel_upgrades/failure.png', _("Your system is missing critical components. A package corresponding to your edition of HamoniKR should provide the virtual package 'hamonikr-info' and the file /etc/hamonikr/info."))
+            self.show_message('/usr/lib/linuxmint/mintUpdate/rel_upgrades/failure.png', _("Your system is missing critical components. A package corresponding to your edition of Linux Mint should provide the virtual package 'mint-info' and the file /etc/linuxmint/info."))
         else:
             self.current_codename = 'unknown'
             self.current_edition = 'unknown'
@@ -58,7 +58,7 @@ class Assistant:
                 self.rel_editions = config['general']['editions']
                 if self.current_edition.lower() in self.rel_editions:
                     label = Gtk.Label()
-                    label.set_markup(_("A new version of HamoniKR is available!"))
+                    label.set_markup(_("A new version of Linux Mint is available!"))
                     self.vbox_intro.pack_start(label, False, False, 6)
                     image = Gtk.Image.new_from_file(os.path.join(rel_path, "%s.png" % self.current_edition.lower()))
                     self.vbox_intro.pack_start(image, False, False, 0)
@@ -88,7 +88,7 @@ class Assistant:
         vbox_content.pack_start(label, False, False, 6)
         self.vbox_rel_notes.pack_start(vbox_content, False, False, 6)
         link = Gtk.Label()
-        link.set_markup("<a href='http://www.hamonikr.org'><b>%s</b></a>" % (_("Release notes for %s") % self.rel_target_name))
+        link.set_markup("<a href='http://www.linuxmint.com/rel_%s_%s.php'><b>%s</b></a>" % (self.rel_target_codename, self.current_edition.lower(), _("Release notes for %s") % self.rel_target_name))
         self.vbox_rel_notes.pack_start(link, False, False, 6)
         label = Gtk.Label()
         label.set_markup("<i><b>%s</b></i>" % _("Click on the link to open the release notes."))
@@ -110,7 +110,7 @@ class Assistant:
         vbox_content.pack_start(label, False, False, 6)
         self.vbox_new_features.pack_start(vbox_content, False, False, 6)
         link = Gtk.Label()
-        link.set_markup("<a href='http://www.hamonikr.org'><b>%s</b></a>" % (_("New features in %s") % self.rel_target_name))
+        link.set_markup("<a href='http://www.linuxmint.com/rel_%s_%s_whatsnew.php'><b>%s</b></a>" % (self.rel_target_codename, self.current_edition.lower(), _("New features in %s") % self.rel_target_name))
         self.vbox_new_features.pack_start(link, False, False, 6)
         label = Gtk.Label()
         label.set_markup("<i><b>%s</b></i>" % _("Click on the link to browse the new features."))
@@ -202,6 +202,8 @@ class Assistant:
             self.vbox_meta.hide()
             if self.check_button.get_active():
                 self.assistant.set_page_complete(self.vbox_prerequesites, True)
+            else:
+                self.assistant.set_page_complete(self.vbox_prerequesites, False)
 
     def show_message(self, icon, msg):
         vbox_content = Gtk.HBox()
